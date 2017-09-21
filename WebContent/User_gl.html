@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>用户管理界面</title>
+<link href="css/jPages.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+body {
+	
+}
+
+.table {
+	text-align: center;
+	width: 1400px;
+	border: 3px solid gray;
+	margin: 20px;
+}
+
+tr {
+	height: 40px;
+}
+
+#btn1 {
+	width: 100px;
+	height: 40px;
+	font-size: 20px;
+	background: red;
+	color: white;
+}
+
+#btn {
+	width: 102px;
+	margin: 10px auto;
+}
+
+.gl {
+	width: 1450px;
+	margin: 0 auto;
+	border: 1px solid gray;
+}
+
+h3 {
+	margin-left: 20px;
+}
+
+#add-form {
+	width: 660px;
+	height: 325px;
+	border: 1px solid gray;
+	position: absolute;
+	left: 610px;
+	top: 103px;
+	background: white;
+	display: none;
+}
+
+.add-btn {
+	width: 100px;
+	height: 40px;
+	font-size: 20px;
+}
+
+input {
+	width: 240px;
+	line-height: 40px;
+}
+
+#table3 {
+	margin-top: 20px;
+}
+</style>
+</head>
+<body>
+	<script src="js/jquery-3.1.1.min(1).js"></script>
+<script src="jQueryTable/js/table.js"></script>
+<script src="jQueryTable/js/jquery.page.js"></script>
+<script src="js/jPages.js"></script>
+<script src="js/bootstrap.min.js"></script>
+	<script>
+		$(document)
+				.ready(
+						function() {
+							$
+									.ajax({
+										url : "user",
+										type : "post",
+										dataType : "json",
+										success : function(json) {
+											for (var i = 0; i < json.result.length; i++) {
+												$("#table1")
+														.append(
+																"<tr>" + "<td>"
+																		+ json.result[i].realName
+																		+ "<\/td>"
+																		+ "<td>"
+																		+ json.result[i].name
+																		+ "<\/td>"
+																		+ "<td>"
+																		+ json.result[i].adress
+																		+ "<\/td>"
+																		+ "<td>"
+																		+ json.result[i].userName
+																		+ "<\/td>"
+																		+ "<td>"
+																		+ json.result[i].idCardNum
+																		+ "<\/td>"
+																		+ "<td>"
+																		+ json.result[i].tel
+																		+ "<\/td>"
+																		+ "<td>"
+																		+ json.result[i].phone
+																		+ "<\/td>"
+																		+ "<td><a href='selectUser?idNum="
+																		+ json.result[i].idCardNum
+																		+ "'>查看<\/a><\/td>"
+																		+ "<\/tr>")
+											}
+										}
+									})
+
+							$
+									.ajax({
+										url : "getAdminUser",
+										type : "post",
+										dataType : "json",
+										success : function(json) {
+											
+											for (var i = 0; i < json.result.length; i++) {
+												$("#table2")
+														.append(
+																"<tr><td>"
+																		+ json.result[i].name
+																		+ "<\/td><td>"
+																		+ json.result[i].userName
+																		+ "<\/td><td>"
+																		+ json.result[i].power
+																		+ "<\/td><td><a href='ShouyuRole.jsp?userName="+json.result[i].userName+"'>授予角色<\/a>&nbsp;&nbsp;<a href='deleteadmin?userName="
+																		+ json.result[i].userName
+																		+ "'>删除<\/a><\/td><\/tr>")
+											}
+											 $("div.holder").jPages({
+											      containerID : "movies", //存放表格的窗口标签ID
+											      previous : "←前一页", //指示首页的按钮
+											      next : "后一页→",//指示尾页的按钮
+											      perPage : 5,//每页显示表格的行数
+											      delay : 0 //分页时动画持续时间，0表示无动画
+											    });
+										}
+									
+									})
+
+							$("#btn1").click(function() {
+								$("#add-form").show();
+								$("#btn1").prop("disabled", false);
+							})
+							$("#btn3").click(function() {
+								$("#add-form").hide();
+								$("#btn1").prop("disabled", false);
+							})
+
+							$("#btn2")
+									.click(
+											function() {
+												var name = $(
+														"input[name='name']")
+														.val();
+												var userName = $(
+														"input[name='userName']")
+														.val();
+												var pwd = $("input[name='pwd']")
+														.val();
+												var idNum = $(
+														"input[name='idNum']")
+														.val();
+
+												$
+														.ajax({
+															url : "addusers",
+															type : "post",
+															data : {
+																"name" : name,
+																"userName" : userName,
+																"pwd" : pwd
+															},
+															dataType : "text",
+															success : function(
+																	data) {
+																$("#add-form")
+																		.hide();
+																if (data == "false") {
+																	alert("数据库已经有该用户，请重新添加！")
+																} else if (data == "true") {
+																	$("#table2")
+																			.append(
+																					"<tr><td>"
+																							+ name
+																							+ "<\/td><td>"
+																							+ userName
+																							+ "<\/td><td>"
+																							+ "无"
+																							+ "<\/td><td><a href='ShouyuRole.jsp?userName="+userName+"'>授予角色<\/a>&nbsp;&nbsp;<a href='deleteadmin?userName="
+																							+ userName
+																							+ "'>删除<\/a><\/td><\/tr>")
+																}
+																 $("div.holder").jPages({
+																      containerID : "movies", //存放表格的窗口标签ID
+																      previous : "←前一页", //指示首页的按钮
+																      next : "后一页→",//指示尾页的按钮
+																      perPage : 5,//每页显示表格的行数
+																      delay : 0 //分页时动画持续时间，0表示无动画
+																    });
+															}
+														})
+
+											})
+											
+											
+
+						})
+	</script>
+	<h2 align="center">用户管理界面</h2>
+	<div id="btn">
+		<button id="btn1">增加用户</button>
+	</div>
+	<div class="gl">
+		<h3>普通用户管理</h3>
+		<table align="center" border=1px id="table1" class="table">
+			<tr>
+				<th>用户姓名</th>
+				<th>机构名称</th>
+				<th>地址</th>
+				<th>用户名</th>
+				<th>身份证号</th>
+				<th>固话</th>
+				<th>手机号</th>
+				<th>操作</th>
+			</tr>
+		</table>
+	</div>
+	<div class="gl">
+		<h3>管理员用户管理</h3>
+		<table align="center" border=1px id="table2" class="table">
+		    <thead>
+			<tr>
+				<th>机构或管理部门</th>
+				<th>用户名</th>
+				<th>角色</th>
+				<th>操作</th>
+			</tr>
+			</thead>
+			<tbody id="movies">
+			</tbody>
+		</table>
+	</div>
+	<div class="holder" style="margin-left: 760px;"></div>
+	<div id="add-form">
+		<table align="center" id="table3">
+			<tr>
+				<td><label>管理处室</label></td>
+				<td><input type="text" name="name"></td>
+			</tr>
+			<tr>
+				<td><label>用户名</label></td>
+				<td><input type="text" name="userName"></td>
+			</tr>
+			<tr>
+				<td><label>密码</label></td>
+				<td><input type="text" name="pwd"></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<button class="add-btn" id="btn2">提交</button>
+					<button class="add-btn" id="btn3">取消</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

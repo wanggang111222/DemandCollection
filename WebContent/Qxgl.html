@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>权限管理</title>
+<style type="text/css">
+   body{
+   font-family:微软雅黑;font-size:20px;
+   }
+   select{
+   font-size:20px;line-height:20px;height: 27px;width: 185px;
+   }
+   #select{
+   width:326px;
+   margin:10px auto;
+   
+   }
+   table{
+   width:1400px; border:3px solid gray;
+   }
+   tr{
+   text-align:center;
+   height:30px;
+   }
+   .br-none
+   {
+    border-right: none;
+   }
+   .blr-none
+   {
+   border-left: none;
+   border-right:none;
+   }
+   .bl-none
+   {
+   border-left:none;
+   }
+   .qxheader
+   {
+   background:#dddddd;
+   }
+   .info
+   {
+   text-align:left;
+   }
+   button{
+	width:100px;
+	height: 40px;
+	font-size:20px;
+   }
+   #btn
+   {
+   width:110px;
+   margin:20px auto;
+   }
+</style>
+</head>
+<body>
+    <script src="js/jquery-3.1.1.min(1).js"></script>
+   <script type="text/javascript">
+       $(document).ready(function(){
+    	   //获取全部用户的用户名添加到下拉框
+    	   $.ajax({
+    		   url:"getusers",
+    		   type:"post",
+    		   dataType:"json",
+    		   success:function(json){
+    			   for(var i=0;i<json.result.length;i++){
+
+    				   $("#users").append("<option value='"+json.result[i]+"'>"+json.result[i]+"</option");
+    			   }
+    		   }
+    	   })
+    	   
+    	   //确定按钮点击事件
+    	   $("#btn1").click(function(){
+    		   var user=$("#users").val();
+    		   if(user=="请选择"){
+    			   alert("请先选择用户！");
+    			   return false;
+    		   }
+    	   })
+       })
+   </script>
+   <h2 align="center">权限管理</h2>
+   <div id="qx">
+       <form action="qxgl" method="post">
+       <div id="select">
+       <label>请选择用户：</label>
+       <select id="users" name="users">
+          <option value="请选择">请选择</option>
+       </select>
+       </div>
+       <table border="1px" align="center" cellspacing="0" cellpadding="0">
+           <tr>
+              <th width="300px">权限名称</th>
+              <th width="600px">权限说明</th>
+              <th width="300px">是否授予</th>
+           </tr>
+           <tr>
+              <td>需求征集</td>
+              <td class="info">可填写需求征集表</td>
+              <td><input type="checkbox" value="需求征集" name="qx"></td>
+           </tr>
+           <tr>
+              <td >需求管理</td>
+              <td class="info">可以对需求进行查询、修改和删除</td>
+              <td><input type="checkbox" value="需求管理" name="qx"></td>
+           </tr>
+           <!-- 
+           <tr>
+               <td>查看详情</td>
+               <td>对需求表的详细信息进行查看</td>
+               <td><input type="checkbox" value="查看详情" name="qx1"></td>
+           </tr>
+           <tr>
+              <td>删除</td>
+              <td>对需求征集表的删除</td>
+              <td><input type="checkbox" value="删除" name="qx1"></td>
+           </tr>
+           <tr>
+              <td>编辑</td>
+              <td>对需求征集表的修改</td>
+              <td><input type="checkbox" value="编辑" name="qx1"></td>
+           </tr>
+            -->
+           <tr>
+              <td>用户信息</td>
+              <td class="info">查看用户信息并对用户信息进行修改</td>
+              <td><input type="checkbox" value="用户信息" name="qx"></td>
+           </tr>
+           <tr>
+              <td>修改密码</td>
+              <td class="info">可对用户密码进行修改</td>
+              <td><input type="checkbox" value="修改密码" name="qx"></td>
+           </tr>
+           <tr>
+             <td>形式审核</td>
+             <td class="info">可对需求征集内容进行形式审核并提交审核结果</td>
+             <td><input type="checkbox" value="形式审核" name="qx"></td>
+           </tr>
+           <tr>
+            <td>部门审核</td>
+            <td class="info">可以对征集内容进行技术上的审核并提交审核结果</td>
+            <td><input type="checkbox" value="部门审核" name="qx"></td>
+           </tr>
+           <tr>
+              <td>统计查询</td>
+              <td class="info">可以对需求内容进行统计报表</td>
+              <td><input type="checkbox" value="统计查询" name="qx"></td>
+           </tr>
+       </table>
+       <div id="btn">
+       <button type="submit" id="btn1">确定</button>
+       </div>
+       </form>
+   </div>
+</body>
+</html>

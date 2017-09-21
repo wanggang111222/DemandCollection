@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>综合查询</title>
+<style type="text/css">
+body {
+	font-family: 微软雅黑;
+	font-size: 20px;
+}
+
+.table {
+	width: 1180px;
+	border: 3px solid gray;
+	margin-top: 20px;
+}
+
+tr {
+	width: 30px;
+}
+
+ul li {
+	list-style: none;
+}
+
+button {
+	width: 120px;
+	height: 40px;
+	font-size: 20px;
+}
+
+select {
+	width: 160px;
+	height: 40px;
+}
+
+input {
+	width: 160px;
+	line-height: 34px;
+}
+
+select option {
+	text-align: center;
+}
+
+span {
+	margin-left: 92px;
+}
+
+#main {
+	width: 1190px;;
+	border: gray 1px solid;
+	margin: 0 auto;
+}
+
+#btn {
+	width: 103px;
+	margin: 20px auto;
+}
+
+#table2 {
+	width: 1400px;
+	border: 3px solid gray;
+}
+
+tr {
+	text-align: center;
+	height: 30px;
+}
+canvas{margin-left:700px;}
+</style>
+</head>
+<body>
+	<script src="js/jquery-3.1.1.min(1).js"></script>
+	<script src="js/chart.js"></script>
+	<script>
+		$(document)
+				.ready(
+						function() {
+							var type = [ "机构全称", "归口管理单位", "所在地域", "法人代表",
+									"联系人", "机构属性", "技术需求名称", "关键字", "拟投入资金总额",
+									"技术需求解决方式", "科技活动类型", "学科分类", "需求技术所属领域",
+									"需求技术应用行业" ];
+							for (var i = 0; i < type.length; i++) {
+								$("#select1").append(
+										"<option value='"+type[i]+"'>"
+												+ type[i] + "</option>");
+							}
+							$("#add")
+									.click(
+											function() {
+												if ($("table tr").length <= 15) {
+													$("#table1")
+															.append(
+																	"<tr>"
+																			+ "<td>"
+																			+ "<select>"
+																			+ "<option value='并含'>并含<\/option>"
+																			+ "<option value='或含'>或含<\/option>"
+																			+ "<\/select>"
+																			+ "<\/td>"
+																			+ "<td>"
+																			+ "<select id='select"
+																			+ $("#table1 tr").length
+																			+ "'>"
+																			+ "<option value='请选择'>请选择<\/option>"
+																			+ "<\/select>:"
+																			+ "<\/td>"
+																			+ "<td>"
+																			+ "<input type='text'>:"
+																			+ "<select>"
+																			+ "<option value='模糊查询'>模糊查询<\/option>"
+																			+ "<option value='精确查询'>精确查询<\/option>"
+																			+ "<\/select>"
+																			+ "<\/td>"
+																			+ "<td>"
+																			+ "<a href='javascript:void(0)'>移除<\/a>"
+																			+ "<\/td>"
+																			+ "<\/tr>");
+													for (var i = 0; i < type.length; i++) {
+														$(
+																"#select"
+																		+ ($("#table1 tr").length - 1))
+																.append(
+																		"<option value='"+type[i]+"'>"
+																				+ type[i]
+																				+ "</option>");
+													}
+												} else {
+													alert("最多只能添加14项，已经超过上限！");
+													return false;
+												}
+
+											})
+							$("#table1").on("click", "tr td a", function() {
+								$(this).parent().parent().remove();
+							})
+							/*******************************显示全部结果************************************/
+							$
+									.ajax({
+										url : "getrequestInfo",
+										type : "post",
+										dataType : "json",
+										success : function(json) {
+											$("#table2")
+													.append(
+															"<tr>"
+																	+ "<th>需求名称<\/th>"
+																	+ "<th>机构名称<\/th>"
+																	+ "<th>所在地域<\/th>"
+																	+ "<th>归口管理单位<\/th>"
+																	+ "<th>机构属性<\/th>"
+																	+ "<th>科技活动类型<\/th>"
+																	+ "<th>进行审核<\/th>"
+																	+ "<\/tr>")
+											for (var i = 0; i < json.result.length; i++) {
+												if (json.result[i].xsCheck == "false") {
+													$("#table2")
+															.append(
+																	"<tr>"
+																			+ "<td>"
+																			+ json.result[i].requestName
+																			+ "<\/td>"
+																			+ "<td>"
+																			+ json.result[i].name
+																			+ "<\/td>"
+																			+ "<td>"
+																			+ json.result[i].suozaidiyu
+																			+ "<\/td>"
+																			+ "<td>"
+																			+ json.result[i].Centralized
+																			+ "<\/td>"
+																			+ "<td>"
+																			+ json.result[i].property
+																			+ "<\/td>"
+																			+ "<td>"
+																			+ json.result[i].studyClassfied
+																			+ "<\/td>"
+																			+ "<td><a href='Xssh.jsp?tec_id="
+																			+ json.result[i].tec_id
+																			+ "' >审核<\/a><\/td>"
+																			+ "<\/tr>")
+												} else if (json.result[i].xsCheck == "true") {
+													$("#table2")
+															.append(
+																	"<tr>"
+																			+ "<td>"
+																			+ json.result[i].requestName
+																			+ "<\/td>"
+																			+ "<td>"
+																			+ json.result[i].name
+																			+ "<\/td>"
+																			+ "<td>"
+																			+ json.result[i].suozaidiyu
+																			+ "<\/td>"
+																			+ "<td>"
+																			+ json.result[i].Centralized
+																			+ "<\/td>"
+																			+ "<td>"
+																			+ json.result[i].property
+																			+ "<\/td>"
+																			+ "<td>"
+																			+ json.result[i].studyClassfied
+																			+ "<\/td>"
+																			+ "<td>已审核<\/td>"
+																			+ "<\/tr>")
+												}
+
+											}
+										}
+									})
+
+							/*****************************查询功能******************************/
+							$("#chaxun")
+									.click(
+											function() {
+												var hangshu = $("#table1 tr").length;
+												var AndOr = "";
+												var ziduan = "";
+												var mingcheng = "";
+												var isMohu = "";
+												if (hangshu >= 3) {
+													for (var i = 2; i < hangshu; i++) {
+														AndOr += $(
+																"#table1 tr:eq("
+																		+ i
+																		+ ") td:eq(0) select")
+																.val()
+																+ ",";
+													}
+													for (var i = 2; i < hangshu; i++) {
+														isMohu += $(
+																"#table1 tr:eq("
+																		+ i
+																		+ ") td:eq(2) select")
+																.val()
+																+ ",";
+													}
+												}
+												if (hangshu >= 2) {
+													for (var i = 1; i < hangshu; i++) {
+														ziduan += $(
+																"#table1 tr:eq("
+																		+ i
+																		+ ") td:eq(1) select")
+																.val()
+																+ ",";
+													}
+													for (var i = 1; i < hangshu; i++) {
+														mingcheng += $(
+																"#table1 tr:eq("
+																		+ i
+																		+ ") td:eq(2) input")
+																.val()
+																+ ",";
+													}
+												}
+												//传输数据显示所查询项
+												$
+														.ajax({
+															url : "zhcx",
+															type : "post",
+															data : {
+																"hangshu" : hangshu,
+																"AndOr" : AndOr,
+																"ziduan" : ziduan,
+																"isMohu" : isMohu,
+																"mingcheng" : mingcheng
+															},
+															dataType : "json",
+															success : function(
+																	json) {
+																$("#table2")
+																		.html(
+																				"<tr>"
+																						+ "<th>需求名称<\/th>"
+																						+ "<th>机构名称<\/th>"
+																						+ "<th>所在地域<\/th>"
+																						+ "<th>归口管理单位<\/th>"
+																						+ "<th>机构属性<\/th>"
+																						+ "<th>科技活动类型<\/th>"
+																						+ "<th>进行审核<\/th>"
+																						+ "<\/tr>");
+																for (var i = 0; i < json.result.length; i++) {
+																	if (json.result[i].xsCheck == "false") {
+																		$(
+																				"#table2")
+																				.append(
+																						"<tr>"
+																								+ "<td>"
+																								+ json.result[i].requestName
+																								+ "<\/td>"
+																								+ "<td>"
+																								+ json.result[i].name
+																								+ "<\/td>"
+																								+ "<td>"
+																								+ json.result[i].suozaidiyu
+																								+ "<\/td>"
+																								+ "<td>"
+																								+ json.result[i].Centralized
+																								+ "<\/td>"
+																								+ "<td>"
+																								+ json.result[i].property
+																								+ "<\/td>"
+																								+ "<td>"
+																								+ json.result[i].studyClassfied
+																								+ "<\/td>"
+																								+ "<td><a href='Xssh.jsp?tec_id="
+																								+ json.result[i].tec_id
+																								+ "' >审核<\/a><\/td>"
+																								+ "<\/tr>")
+																	} else if (json.result[i].xsCheck == "true") {
+																		$(
+																				"#table2")
+																				.append(
+																						"<tr>"
+																								+ "<td>"
+																								+ json.result[i].requestName
+																								+ "<\/td>"
+																								+ "<td>"
+																								+ json.result[i].name
+																								+ "<\/td>"
+																								+ "<td>"
+																								+ json.result[i].suozaidiyu
+																								+ "<\/td>"
+																								+ "<td>"
+																								+ json.result[i].Centralized
+																								+ "<\/td>"
+																								+ "<td>"
+																								+ json.result[i].property
+																								+ "<\/td>"
+																								+ "<td>"
+																								+ json.result[i].studyClassfied
+																								+ "<\/td>"
+																								+ "<td>已审核<\/td>"
+																								+ "<\/tr>")
+																	}
+
+																}
+															},
+															error : function(e) {
+																alert(e);
+															}
+
+														})
+											})
+
+						})
+	</script>
+	<script>
+		$(document)
+				.ready(
+						function() {
+							$("#chart").hide();
+							$("input[name='ischart']").click(function() {
+								var ischart = $(this).val();
+								var chartType = $("#chartType").val();
+								var tjZiduan = $("#tjZiduan").val();
+								if (ischart == "yes") {
+
+									$("#chart").show();
+
+								} else if (ischart = "no") {
+									$("#chart").hide();
+								}
+							})
+							$("#chaxun")
+									.click(
+											function() {
+												var hangshu = $("#table1 tr").length;
+												var chartType = $("#chartType")
+														.val();
+												var tjZiduan = $("#tjZiduan")
+														.val();
+												var AndOr = "";
+												var ziduan = "";
+												var mingcheng = "";
+												var isMohu = "";
+												if (hangshu >= 3) {
+													for (var i = 2; i < hangshu; i++) {
+														AndOr += $(
+																"#table1 tr:eq("
+																		+ i
+																		+ ") td:eq(0) select")
+																.val()
+																+ ",";
+													}
+													for (var i = 2; i < hangshu; i++) {
+														isMohu += $(
+																"#table1 tr:eq("
+																		+ i
+																		+ ") td:eq(2) select")
+																.val()
+																+ ",";
+													}
+												}
+												if (hangshu >= 2) {
+													for (var i = 1; i < hangshu; i++) {
+														ziduan += $(
+																"#table1 tr:eq("
+																		+ i
+																		+ ") td:eq(1) select")
+																.val()
+																+ ",";
+													}
+													for (var i = 1; i < hangshu; i++) {
+														mingcheng += $(
+																"#table1 tr:eq("
+																		+ i
+																		+ ") td:eq(2) input")
+																.val()
+																+ ",";
+													}
+												}
+												//Get context with jQuery - using jQuery's .get() method.
+												var ctx = $("#myChart").get(0)
+														.getContext("2d");
+												//This will get the first returned node in the jQuery collection.
+												var myNewChart = new Chart(ctx)
+												$
+														.ajax({
+															url : "chart",
+															type : "post",
+															data : {
+																"chartType" : chartType,
+																"tjZiduan" : tjZiduan,
+																"AndOr" : AndOr,
+																"ziduan" : ziduan,
+																"isMohu" : isMohu,
+																"mingcheng" : mingcheng
+															},
+															dataType : "json",
+															success : function(
+																	json) {
+																if (chartType == "pie") {
+																	myNewChart
+																			.Pie(json.result);
+																} else if (chartType == "doughnut") {
+																	myNewChart
+																			.Doughnut(json.result);
+																} else if (chartType == "bar") {
+																	myNewChart
+																			.Bar(json);
+																} else if (chartType == "line") {
+
+																}
+															}
+														})
+											})
+						})
+	</script>
+	<!-- 界面验证 -->
+    <script type="text/javascript">
+       $(document).ready(function(){
+    	   var ziduan
+       })
+    </script>
+	<h2 align="center">综合查询</h2>
+	<div id="main">
+		<table align="center" border="1" cellspacing="0" cellpadding="0"
+			id="table1">
+			<tr>
+				<td>并或含关系</td>
+				<td>字段选择</td>
+				<td>输入具体名称</td>
+				<td>操作</td>
+			</tr>
+
+			<tr>
+				<td width="200px"></td>
+				<td width="200px"><select id="select1">
+						<option value="请选择">请选择</option>
+				</select></td>
+				<td width="340px"><input type="text" name="type"></td>
+				<td width="150px"><button id="add">增加查询项</button></td>
+			</tr>
+
+		</table>
+		<table align="center" border="1" cellspacing="0" cellpadding="0"
+			width="898px">
+			<tr>
+				<td colspan="4"><span>是否生成图表</span>
+					<div>
+						<input type="radio" name="ischart" value="yes">是<input
+							type="radio" name="ischart" value="no">否
+					</div>
+					<div id="chart">
+						<span>请选择生成的图表类型</span> <select id="chartType">
+							<option value='pie'>饼图</option>
+							<option value='doughnut'>环形图</option>
+							<option value='bar'>柱状图</option>
+						</select> <span>请选择统计字段</span> <select id="tjZiduan">
+							<option value="property">机构属性</option>
+							<option value="studyClassfied">科技活动类型</option>
+							<option value="cooperation">技术需求解决方式</option>
+							<option value="Centralized">归口管理部门</option>
+							<option value="suozaidiyu">所在地域</option>
+							<option value="subjectClassfied">学科分类</option>
+							<option value="tech">需求技术应用行业</option>
+						</select>
+					</div></td>
+			</tr>
+		</table>
+
+		<div id="btn">
+			<button id="chaxun">提交</button>
+		</div>
+	</div>
+	<div id="result">
+		<table align="center" border="1" cellspacing="0" cellpadding="0"
+			id="table2">
+		</table>
+	</div>
+	<canvas id="myChart" width="400" height="400"></canvas>
+</body>
+</html>

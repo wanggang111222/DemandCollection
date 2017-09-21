@@ -1,0 +1,84 @@
+@CHARSET "UTF-8";
+
+body{
+	font-family: 微软雅黑;
+}
+h2
+{
+	text-align: center;
+	margin-top:50px;
+}
+#login-form
+{
+	text-align:center;
+	background:url("../images/Login.png") no-repeat center;
+	height:940px;
+	border:1px solid #c0c0c0;
+}
+
+#form
+{
+	display:inline-block;
+	border:1px solid #c0c0c0;
+    padding: 62px;
+    margin-top: 329px;
+}
+
+#bottom
+{
+	height:45px;
+	background:#c0c0c0;
+}
+form
+{
+	position:relative;
+	display:inline-block;
+}
+    #login-form label
+    {
+       display: inline-block;
+       width:80px;
+       font-size:20px;
+       text-align: center;
+    }
+    #login-form input
+    {
+       line-height: 20px;
+       margin-top:20px;
+    }
+    span
+    {
+       position:absolute;
+       left: 292px;
+       top: 163px;
+       border:1px solid red;
+       font-size: 20px;
+    }
+    #btn
+    {
+       margin-top:20px;
+    }
+    #btn button
+    {
+           width: 98px;
+         display: inline-block;
+        height: 28px;
+        font-size: 20px;
+        margin-left: 4px;
+    }
+    ul li
+    {
+        list-style: none;
+        float:left;
+        font-size: 18px;
+    }
+    a
+    {
+        text-decoration: none;
+        display: inline-block;
+        width:98px;
+        height:26px;
+        border:1px solid #c0c0c0;
+        line-height: 30px;
+        background: #c0c0c0;
+    }

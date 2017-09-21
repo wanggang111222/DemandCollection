@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>角色管理</title>
+<style type="text/css">
+   body{font-family:微软雅黑;font-size:20px}
+   button{
+	width:100px;
+	height: 40px;
+   }
+   #add_role
+   {
+    background-color:red;
+   }
+      select{
+   font-size:20px;line-height:20px;height: 27px;width: 185px;
+   }
+   #btn1{text-align:center;}
+   #select{   width:326px;
+   margin:10px auto;}
+   #btn1{   width:110px;
+   margin:20px auto;}
+      .info
+   {
+   text-align:left;
+   }
+      tr{
+   text-align:center;
+   height:30px;
+   }
+   #fix-add{    width: 560px;
+    height: 310px;
+    border: 1px solid red;
+    position: fixed;
+    left: 700px;
+    top: 151px;
+    background:white;
+    display:none;
+    }
+        #btn-roleName{text-align:center;margin-top:100px;}
+        #roleName{width:185px;height:27px;}
+        #btn-roleName{text-align:center;}
+        
+</style>
+</head>
+<body>
+    <script src="js/jquery-3.1.1.min(1).js"></script>
+  <script type="text/javascript">
+      $(document).ready(function(){
+             //新增角色
+             $("#add_role").click(function(){
+            	  $("#fix-add").show();
+            	  $(".disabled").prop("disabled",true);
+            	  $("input[name=qx]").prop("disabled",true);
+            	  $(".a").prop("disabled",true);
+             })
+             $("#quxiao").click(function(){
+            	 $("#fix-add").hide();
+           	     $(".disabled").prop("disabled",false);
+        	     $("input[name=qx]").prop("disabled",false);
+        	     $("a").prop("disabled",false);
+        	     
+             })
+             $("#queding").click(function(){
+            	 var roleName=$("#roleName").val();
+            	 $.ajax({
+            		 url:"addroles",
+            		 type:"post",
+            		 data:{"roleName":roleName},
+            		 dataType:"text",
+            		 success:function(data){
+            			 if(data=="false")
+            				 {
+                    		 alert("角色名已经存在，请重新输入！")
+                    		 return false;
+            				 }
+            			 else
+            				 {
+            				 $("#role").append("<option value='"+roleName+"'>"+roleName+"<\/option>")
+            				 $("#role-info").append("<tr>"
+            				                  +"<td>"+roleName+"<\/td>"
+            				                  +"<td><\/td>"
+            				                  +"<td><a href='roledelete?roleName="+roleName+"'>删除<\/a><\/td>"
+            				                  +"<\/tr>")
+                        	 $("#fix-add").hide();
+                       	     $(".disabled").prop("disabled",false);
+                    	     $("input[name=qx]").prop("disabled",false);
+                    	     $("a").prop("disabled",false);
+                    	     $("#roleName").val("");
+            				 }
+            		 }
+            	 })
+            	 if(roleName==""||roleName==null)
+            		 {
+            		 alert("角色名输入为空，请重新输入！");
+            		 return false;
+            		 }
+
+             });
+             //获取角色名称
+             $.ajax({
+            	 url:"getroles",
+            	 type:"post",
+            	 dataType:"json",
+            	 success:function(json){
+            		 for(var i=0;i<json.result.length;i++){
+                		 $("#role").append("<option value='"+json.result[i]+"'>"+json.result[i]+"<\/option>");
+            		 }
+            	 }
+             });
+             
+             //获取角色信息
+             $.ajax({
+            	 url:"getroleinfo",
+            	 type:"post",
+            	 dataType:"json",
+            	 success:function(json){
+            		 //alert(111);
+            		 //alert(json.result.length);
+            		 
+            		 for(var i=0;i<json.result.length;i++){
+                		 var xqzj_qx="";
+                		 var xqgl_qx="";
+                		 var yhxx_qx="";
+                		 var yhxg_qx="";
+                		 var xssh_qx="";
+                		 var bmsh_qx="";
+                		 var tjcx_qx="";
+                		     if(json.result[i].xqzj_qx=="0")
+                		    	 {
+                		    	 xqzj_qx="需求征集";
+                		    	 }
+                		     if(json.result[i].xqgl_qx=="0")
+            		    	 {
+                		    	 xqgl_qx="需求管理";
+            		    	 }
+                		     if(json.result[i].yhxx_qx=="0")
+            		    	 {
+                		    	 yhxx_qx="用户信息";
+            		    	 }
+                		     if(json.result[i].yhxg_qx=="0")
+            		    	 {
+                		    	 yhxg_qx="修改密码";
+            		    	 }
+                		     if(json.result[i].xssh_qx=="0")
+            		    	 {
+                		    	 xssh_qx="形式审核";
+            		    	 }
+                		     if(json.result[i].bmsh_qx=="0")
+            		    	 {
+                		    	 bmsh_qx="部门审核";
+            		    	 }
+                		     if(json.result[i].tjcx_qx=="0")
+            		    	 {
+                		    	 tjcx_qx="统计查询";
+            		    	 }
+                		     var quanxian=xqzj_qx+" "+xqgl_qx+" "+yhxx_qx+" "+yhxg_qx+" "+xssh_qx+" "+bmsh_qx+" "+tjcx_qx;
+                    		 $("#role-info").append("<tr>"
+                    				  +"<td>"+json.result[i].roleName+"<\/td>"
+                    				  +"<td>"+quanxian+"<\/td>"
+                    				  +"<td> <a href='roledelete?roleName="+json.result[i].roleName+"' class='a'>删除<\/a> <\/td>"
+                    		          +"<\/tr>")
+            		 }
+
+            	 }
+             })
+             
+             $("#role").change(function(){
+            	 var role=$(this).val();
+            	 $.ajax({
+            		 url:"getRoleQxinfo",
+            		 type:"post",
+            		 data:{"role":role},
+            		 dataType:"json",
+            		 success:function(json){
+            			 $("input[name='qx']").each(function(){
+            				 $(this).prop("checked",false);
+            			 })
+                          if(json.xqzj_qx=="0")
+                        	  {
+                        	  $("input[name='qx'][value='需求征集']").prop("checked",true);
+                        	  }
+                          if(json.xqgl_qx=="0")
+                    	  {
+                    	  $("input[name='qx'][value='需求管理']").prop("checked",true);
+                    	  }
+                          if(json.yhxx_qx=="0")
+                    	  {
+                    	  $("input[name='qx'][value='用户信息']").prop("checked",true);
+                    	  }
+                          if(json.yhxg_qx=="0")
+                    	  {
+                    	  $("input[name='qx'][value='修改密码']").prop("checked",true);
+                    	  }
+                          if(json.xssh_qx=="0")
+                    	  {
+                    	  $("input[name='qx'][value='形式审核']").prop("checked",true);
+                    	  }
+                          if(json.bmsh_qx=="0")
+                    	  {
+                    	  $("input[name='qx'][value='部门审核']").prop("checked",true);
+                    	  }
+                          if(json.tjcx_qx=="0")
+                    	  {
+                    	  $("input[name='qx'][value='统计查询']").prop("checked",true);
+                    	  }
+            		 }
+            	 })
+             })
+             
+             
+             
+      })
+  </script>
+  <h2 align="center">角色管理</h2>
+  <div id="btn1">
+  <button id="add_role" class="disabled">新增角色</button>
+  </div>
+  <form action="roleqx" method="post">
+  <div id="select">
+  <label>请选择角色:</label>
+  <select class="disabled" id="role" name="role">
+     <option value="请选择">请选择</option>
+  </select>
+    </div>
+   <table border="1px" align="center" cellspacing="0" cellpadding="0">
+           <tr>
+              <th width="300px">权限名称</th>
+              <th width="600px">权限说明</th>
+              <th width="300px">是否授予</th>
+           </tr>
+           <tr>
+              <td>需求征集</td>
+              <td class="info">可填写需求征集表</td>
+              <td><input type="checkbox" value="需求征集" name="qx"></td>
+           </tr>
+           <tr>
+              <td >需求管理</td>
+              <td class="info">可以对需求进行查询、修改和删除</td>
+              <td><input type="checkbox" value="需求管理" name="qx"></td>
+           </tr>
+           <!-- 
+           <tr>
+               <td>查看详情</td>
+               <td>对需求表的详细信息进行查看</td>
+               <td><input type="checkbox" value="查看详情" name="qx1"></td>
+           </tr>
+           <tr>
+              <td>删除</td>
+              <td>对需求征集表的删除</td>
+              <td><input type="checkbox" value="删除" name="qx1"></td>
+           </tr>
+           <tr>
+              <td>编辑</td>
+              <td>对需求征集表的修改</td>
+              <td><input type="checkbox" value="编辑" name="qx1"></td>
+           </tr>
+            -->
+           <tr>
+              <td>用户信息</td>
+              <td class="info">查看用户信息并对用户信息进行修改</td>
+              <td><input type="checkbox" value="用户信息" name="qx"></td>
+           </tr>
+           <tr>
+              <td>修改密码</td>
+              <td class="info">可对用户密码进行修改</td>
+              <td><input type="checkbox" value="修改密码" name="qx"></td>
+           </tr>
+           <tr>
+             <td>形式审核</td>
+             <td class="info">可对需求征集内容进行形式审核并提交审核结果</td>
+             <td><input type="checkbox" value="形式审核" name="qx"></td>
+           </tr>
+           <tr>
+            <td>部门审核</td>
+            <td class="info">可以对征集内容进行技术上的审核并提交审核结果</td>
+            <td><input type="checkbox" value="部门审核" name="qx"></td>
+           </tr>
+           <tr>
+              <td>统计查询</td>
+              <td class="info">可以对需求内容进行统计报表</td>
+              <td><input type="checkbox" value="统计查询" name="qx"></td>
+           </tr>
+       </table>
+       <div id="btn1">
+       <button type="submit" id="btn"  class="disabled">确定</button>
+       </div>
+       </form>
+       <div id="fix-add">
+          <div id="btn-roleName">
+          <label>请输入角色名称:</label><input type="text" name="roleName" id="roleName">
+          </div>
+          <div id="btn-roleName">
+          <button id="queding">确定</button>
+          <button id="quxiao">取消</button>
+          </div>
+       </div>
+       <div id="role-list">
+       <table id="role-info" border="1" cellspacing="0" cellpadding="0" align="center">
+          <tr>
+            <th width="300px">角色名称</th>
+            <th width="600px">所有权限</th>
+            <th width="300px">操作</th>
+          </tr>
+       </table>
+       </div>
+</body>
+</html>

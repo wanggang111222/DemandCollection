@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>形式审核管理</title>
+<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="css/jPages.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+body {
+	background: #DBEEFD;
+}
+   #select{
+      width:726px;
+      margin:10px auto;
+   }
+      select{
+   font-size:20px;line-height:20px;height: 27px;width: 185px;
+   }
+   button
+   {
+   	width:100px;
+	height: 30px;
+	font-size:20px;
+	margin-left:20px;
+   }
+   input{line-height:20px;height: 27px;width: 185px;margin-left:20px;}
+
+</style>
+</head>
+    <script src="js/jquery-3.1.1.min(1).js"></script>
+    <script src="js/jPages.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script>
+   $(document).ready(function(){
+	   $.ajax({
+		   url:"getrequestInfo",
+		   type:"post",
+		   dataType:"json",
+		   success:function(json){
+			   $("thead").append("<tr>"
+					             +"<th>需求名称<\/th>"
+					             +"<th>机构名称<\/th>"
+					             +"<th>所在地域<\/th>"
+					             +"<th>归口管理单位<\/th>"
+					             +"<th>机构属性<\/th>"
+					             +"<th>科技活动类型<\/th>"
+					             +"<th>进行审核<\/th>"
+			                      +"<\/tr>")
+			   for(var i=0;i<json.result.length;i++){
+				   if(json.result[i].jsCheck=="false"&&json.result[i].guanlichushi==json.result[i].admin)
+					   {
+					   $("tbody").append("<tr>"
+					             +"<td>"+json.result[i].requestName+"<\/td>"
+					             +"<td>"+json.result[i].name+"<\/td>"
+					             +"<td>"+json.result[i].suozaidiyu+"<\/td>"
+					             +"<td>"+json.result[i].Centralized+"<\/td>"
+					             +"<td>"+json.result[i].property+"<\/td>"
+					             +"<td>"+json.result[i].studyClassfied+"<\/td>"
+					             +"<td><a href='Jssh.html?tec_id="+json.result[i].tec_id+"' >审核<\/a><\/td>"
+			                      +"<\/tr>")
+					   }
+				   else if(json.result[i].jsCheck=="true")
+					   {
+					   /*$("tbody").append("<tr>"
+					             +"<td>"+json.result[i].requestName+"<\/td>"
+					             +"<td>"+json.result[i].name+"<\/td>"
+					             +"<td>"+json.result[i].suozaidiyu+"<\/td>"
+					             +"<td>"+json.result[i].Centralized+"<\/td>"
+					             +"<td>"+json.result[i].property+"<\/td>"
+					             +"<td>"+json.result[i].studyClassfied+"<\/td>"
+					             +"<td>已审核<\/td>"
+			                      +"<\/tr>")*/
+					   }
+				   
+
+			   }
+		   }
+	   })
+	   
+	   //查询按钮事件
+	  $("#btn").click(function(){
+		   var type1=$("#type1").val();
+		   var type2=$("#type2").val();
+		   if(type1=="请选择")
+			   {
+			   alert("请选择类别！");
+			   return false;
+			   }
+		   else
+			   {
+			   $.ajax({
+				   url:"getInfoByType",
+				   type:"post",
+				   data:{"type1":type1,"type2":type2},
+				   dataType:"json",
+				   success:function(json){
+					   $("thead").html("<tr>"
+					             +"<th>需求名称<\/th>"
+					             +"<th>机构名称<\/th>"
+					             +"<th>所在地域<\/th>"
+					             +"<th>归口管理单位<\/th>"
+					             +"<th>机构属性<\/th>"
+					             +"<th>科技活动类型<\/th>"
+					             +"<th>进行审核<\/th>"
+			                      +"<\/tr>");
+					   $("tbody").html("");
+			   for(var i=0;i<json.result.length;i++){
+				   if(json.result[i].jsCheck=="false")
+					   {
+					   $("tbody").append("<tr>"
+					             +"<td>"+json.result[i].requestName+"<\/td>"
+					             +"<td>"+json.result[i].name+"<\/td>"
+					             +"<td>"+json.result[i].suozaidiyu+"<\/td>"
+					             +"<td>"+json.result[i].Centralized+"<\/td>"
+					             +"<td>"+json.result[i].property+"<\/td>"
+					             +"<td>"+json.result[i].studyClassfied+"<\/td>"
+					             +"<td><a href='Jssh.html?tec_id="+json.result[i].tec_id+"' >审核<\/a><\/td>"
+			                      +"<\/tr>")
+					   }
+				   else if(json.result[i].jsCheck=="true")
+					   {
+					   /*$("tbody").append("<tr>"
+					             +"<td>"+json.result[i].requestName+"<\/td>"
+					             +"<td>"+json.result[i].name+"<\/td>"
+					             +"<td>"+json.result[i].suozaidiyu+"<\/td>"
+					             +"<td>"+json.result[i].Centralized+"<\/td>"
+					             +"<td>"+json.result[i].property+"<\/td>"
+					             +"<td>"+json.result[i].studyClassfied+"<\/td>"
+					             +"<td>已审核<\/td>"
+			                      +"<\/tr>")*/
+					   }
+				   
+
+			   }
+				   }
+			   })
+			   }
+	   })
+   })
+</script>
+<body>
+   <h2 align="center">技术审核管理</h2>
+   <div id="select">
+   <label>请选择查询的类型：</label>
+   <select id="type1" name="type1">
+      <option value="请选择">请选择</option>
+      <option value="requestName">需求名称</option>
+      <option value="[dbo].[company].name">机构名称</option> 
+      <option value="suozaidiyu">所在地域</option>
+      <option value="Centralized">归口管理单位</option>
+      <option value="property">机构属性</option>
+      <option value="studyClassfied">科技活动类型</option>
+   </select>
+   <input type="text" name="type2" id="type2">
+   <button id="btn">查询</button>
+   </div>
+   <table class="table table-bordered">
+   <thead></thead>
+   <tbody id="movies"></tbody>
+   </table>
+</body>
+</html>

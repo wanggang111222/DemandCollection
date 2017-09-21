@@ -1,0 +1,62 @@
+@CHARSET "UTF-8";
+
+body
+{
+	font-family: 微软雅黑;
+	font-size: 20px;
+
+}
+h2
+{
+	text-align: center;
+}
+#register-form
+{
+
+	text-align: center;
+	margin-top:200px;
+	border:1px solid #c0c0c0;
+	height:940px;
+	margin:0px auto;
+}
+   form
+   {
+       position:relative;
+       display:inline-block;
+       padding:100px;
+       padding-right:200px;
+       margin-top:20px;
+   }
+   #register-form label
+   {
+	   display:inline-block;
+	   width:145px;
+	   text-align: right;
+   }
+   input
+   {
+       line-height: 20px;
+       margin-top:20px;
+       width:200px;
+   }
+   .btn
+   {
+       width:100px;
+       height:32px;
+       font-size: 20px;
+   }
+   #tishi
+   {
+       position:absolute;
+       left: 462px;
+       top: 98px;
+       width:162px;
+   }
+   span
+   {
+        display:block;
+        margin-top:18px;
+        color:#808080;
+        width:188px;
+        height:28px;
+   }
